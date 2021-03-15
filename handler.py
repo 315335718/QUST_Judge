@@ -46,6 +46,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                 view_to_select = re.findall(r'^create\s+view\s+(\S+)\s*', code, re.I)
                 if view_to_select and view_to_select[0] == table['table_to_do'][0]:
                     view_delete_sql = 'drop view ' + table['table_to_do'][0] + ';'
+                    table_select_sql = 'select * from ' + table['table_to_do'][0] + ';'
                 else:
                     flag = 4  # 视图表名不正确，答案错误
                     case_result = dict()
