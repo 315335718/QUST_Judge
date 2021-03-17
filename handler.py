@@ -55,9 +55,14 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                     detail.append(case_result)  # 本条加进去
                     cache.set(fingerprint, response, timeout=3600)
             elif problem_type == '创建基本表':
-                table_to_create = re.findall(r'^create\s+table\s+(\S+)\s*', code, re.I)
-                if table_to_create and table_to_create[0] == table['table_to_do'][0]:
-                    table_delete_sql = 'drop table ' + table_to_create[0] + ';'
+                table_to_create = re.findall(r'\s*create\s+table\s+(\S+)\s*\(', code, re.I)
+                set1 = set(table['table_to_do'])
+                set2 = set(table_to_create)
+                table_delete_sql = ''
+                table_to_create.reverse()
+                if table_to_create and ((set1 & set2) == (set1 | set2)):
+                    for t in table_to_create:
+                        table_delete_sql += 'drop table ' + t + ';'
                 else:
                     flag = 4  # 基本表名不正确，答案错误
                     case_result = dict()

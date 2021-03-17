@@ -8,6 +8,7 @@ def excute_many(now, sqlcode):
     sql_commands = sqlcode.split(';')
     for command in sql_commands:
         if command != '':
+            command += ';'
             now.execute(command)
 
 
@@ -186,7 +187,6 @@ def sql_judge_create(code, checker, insert_sql, table_delete_sql, db, now):
         except Exception as e:
             result = str(e)
     except Exception as e:
-        print(e)
         result = 'SystemError'
     finally:
         return result
