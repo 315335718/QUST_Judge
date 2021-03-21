@@ -43,9 +43,9 @@ def sql_judge_select(code, checker, table_create_sql, table_delete_sql, db, now,
             excute_many(now, table_delete_sql)
             db.commit()
         except Exception as e:
-            result = str(e)
+            result = 'CompileError' + ': ' + str(e)
     except Exception as e:
-        result = 'SystemError'
+        result = 'SystemError' + ': ' + str(e)
     finally:
         return result
 
@@ -88,9 +88,9 @@ def sql_judge_update(code, checker, table_create_sql, table_delete_sql, table_se
             os.remove(file1)
             os.remove(file2)
         except Exception as e:
-            result = str(e)
+            result = 'CompileError' + ': ' + str(e)
     except Exception as e:
-        result = 'SystemError'
+        result = 'SystemError' + ': ' + str(e)
     finally:
         return result
 
@@ -136,9 +136,9 @@ def sql_judge_view(code, checker, table_create_sql, table_delete_sql, table_sele
             os.remove(file1)
             os.remove(file2)
         except Exception as e:
-            result = str(e)
+            result = 'CompileError' + ': ' + str(e)
     except Exception as e:
-        result = 'SystemError'
+        result = 'SystemError' + ': ' + str(e)
     finally:
         return result
 
@@ -185,8 +185,8 @@ def sql_judge_create(code, checker, insert_sql, table_delete_sql, db, now):
             else:
                 result = 'False'
         except Exception as e:
-            result = str(e)
+            result = 'CompileError' + ': ' + str(e)
     except Exception as e:
-        result = 'SystemError'
+        result = 'SystemError' + ': ' + str(e)
     finally:
         return result

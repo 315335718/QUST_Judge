@@ -38,6 +38,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
             table_select_sql = ''
             view_to_select = ''
             view_delete_sql = ''
+            status_message = ''
             for con in table['table_to_delete']:
                 table_delete_sql += 'drop table ' + con + ';'
             if problem_type == '更新类':
@@ -50,7 +51,8 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                 else:
                     flag = 4  # 视图表名不正确，答案错误
                     case_result = dict()
-                    dic = {'verdict': flag, 'info': '视图表名不正确，答案错误', 'point': 0}
+                    dic = {'verdict': flag, 'point': 0}
+                    status_message = '视图表名不正确，答案错误'
                     case_result.update(dic)
                     detail.append(case_result)  # 本条加进去
                     cache.set(fingerprint, response, timeout=3600)
@@ -66,14 +68,15 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                 else:
                     flag = 4  # 基本表名不正确，答案错误
                     case_result = dict()
-                    dic = {'verdict': flag, 'info': '基本表名不正确，答案错误', 'point': 0}
+                    dic = {'verdict': flag, 'point': 0}
+                    status_message = '基本表名不正确，答案错误'
                     case_result.update(dic)
                     detail.append(case_result)  # 本条加进去
                     cache.set(fingerprint, response, timeout=3600)
 
-            average_point = 100 / len(cases)
             cases_len = len(cases)
             if cases_len > 0:
+                average_point = 100 / len(cases)
                 case = cases[0]
                 pre = ''
                 if problem_type == '查询类':
@@ -102,39 +105,45 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
 
                         case_result = dict()
                         if result == 'True':
-                            dic = {'verdict': 0, 'info': result, 'point': average_point}
+                            dic = {'verdict': 0, 'point': average_point}
                         else:
-                            dic = {'verdict': 4, 'info': result, 'point': 0}
+                            dic = {'verdict': 4, 'point': 0}
                         case_result.update(dic)
                         detail.append(case_result)  # 本条加进去
                         cache.set(fingerprint, response, timeout=3600)
                     flag = 0  # 评测完成
-                elif pre != 'SystemError':
-                    flag = 2  # 编译错误
+                    status_message = '正常评测'
+                elif len(pre) >= 11 and pre[:11] == 'SystemError':
+                    flag = 3  # 题目信息有误
                     case_result = dict()
-                    dic = {'verdict': flag, 'info': '编译错误', 'point': 0}
+                    dic = {'verdict': flag, 'point': 0}
+                    status_message = '系统错误: 题目信息有误,' + pre
                     case_result.update(dic)
                     detail.append(case_result)  # 本条加进去
                     cache.set(fingerprint, response, timeout=3600)
-                else:
-                    flag = 3  # 题目信息有误
+                elif len(pre) >= 12 and pre[:12] == 'CompileError':
+                    flag = 2  # 编译错误
                     case_result = dict()
-                    dic = {'verdict': flag, 'info': '题目信息有误', 'point': 0}
+                    dic = {'verdict': flag, 'point': 0}
+                    status_message = '编译错误: ' + pre
                     case_result.update(dic)
                     detail.append(case_result)  # 本条加进去
                     cache.set(fingerprint, response, timeout=3600)
             else:
                 flag = 3  # 没有测试点，系统错误
                 case_result = dict()
-                dic = {'verdict': flag, 'info': '没有测试点', 'point': 0}
+                dic = {'verdict': flag, 'point': 0}
+                status_message = '系统错误: 没有测试点'
                 case_result.update(dic)
                 detail.append(case_result)  # 本条加进去
                 cache.set(fingerprint, response, timeout=3600)
 
             response['verdict'] = flag
+            response['status_message'] = status_message
         except Exception as e:
             response['verdict'] = 3
-            print(e)
+            status_message = '系统错误: ' + e
+            response['status_message'] = status_message
         finally:
             now.close()
             cur1.close()
