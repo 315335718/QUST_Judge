@@ -11,7 +11,7 @@ flask_app = Flask(__name__)
 
 @flask_app.route('/ping')
 def ping():
-    return Response("pong")
+    return Response("pong22")
 
 
 def check_auth(username, password):
