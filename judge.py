@@ -16,6 +16,7 @@ def sql_judge_select(code, checker, table_create_sql, table_delete_sql, db, now,
     try:
         excute_many(now, table_create_sql)
         db.commit()
+        result = ''
         try:
             cur1.execute(code)
             cur2.execute(checker)
@@ -23,25 +24,16 @@ def sql_judge_select(code, checker, table_create_sql, table_delete_sql, db, now,
 
             res1 = cur1.fetchall()
             res2 = cur2.fetchall()
-            # 获取时间戳
-            ticks1 = int(time.time())
-            ticks2 = int(time.time()) + 1
 
-            curdir = os.path.dirname(os.path.realpath(__file__)) + '/'
-            file1 = curdir + str(ticks1) + str(random.randint(1, 100)) + str(random.randint(1, 100)) + '.txt'
-            file2 = curdir + str(ticks2) + str(random.randint(1, 100)) + str(random.randint(1, 100)) + '.txt'
-
-            # 将所得的数据存储为txt文件
-            with open(file1, 'w') as fp:
-                fp.write(str(res1))
-            with open(file2, 'w') as fp:
-                fp.write(str(res2))
-
-            result = str(filecmp.cmp(file1, file2))
-            os.remove(file1)
-            os.remove(file2)
             excute_many(now, table_delete_sql)
             db.commit()
+
+            res1 = str(res1)
+            res2 = str(res2)
+            if res1 == res2:
+                result = 'True'
+            else:
+                result = 'False'
         except Exception as e:
             result = 'CompileError' + ': ' + str(e)
     except Exception as e:
@@ -54,6 +46,7 @@ def sql_judge_update(code, checker, table_create_sql, table_delete_sql, table_se
     try:
         excute_many(now, table_create_sql)
         db.commit()
+        result = ''
         try:
             cur1.execute(code)
             cur1.execute(table_select_sql)
@@ -70,23 +63,12 @@ def sql_judge_update(code, checker, table_create_sql, table_delete_sql, table_se
             excute_many(now, table_delete_sql)
             db.commit()
 
-            # 获取时间戳
-            ticks1 = int(time.time())
-            ticks2 = int(time.time()) + 1
-
-            curdir = os.path.dirname(os.path.realpath(__file__)) + '/'
-            file1 = curdir + str(ticks1) + str(random.randint(1, 100)) + str(random.randint(1, 100)) + '.txt'
-            file2 = curdir + str(ticks2) + str(random.randint(1, 100)) + str(random.randint(1, 100)) + '.txt'
-
-            # 将所得的数据存储为txt文件
-            with open(file1, 'w') as fp:
-                fp.write(str(res1))
-            with open(file2, 'w') as fp:
-                fp.write(str(res2))
-
-            result = str(filecmp.cmp(file1, file2))
-            os.remove(file1)
-            os.remove(file2)
+            res1 = str(res1)
+            res2 = str(res2)
+            if res1 == res2:
+                result = 'True'
+            else:
+                result = 'False'
         except Exception as e:
             result = 'CompileError' + ': ' + str(e)
     except Exception as e:
@@ -100,6 +82,7 @@ def sql_judge_view(code, checker, table_create_sql, table_delete_sql, table_sele
     try:
         excute_many(now, table_create_sql)
         db.commit()
+        result = ''
         try:
             cur1.execute(code)
             cur1.execute(table_select_sql)
@@ -122,19 +105,12 @@ def sql_judge_view(code, checker, table_create_sql, table_delete_sql, table_sele
             ticks1 = int(time.time())
             ticks2 = int(time.time()) + 1
 
-            curdir = os.path.dirname(os.path.realpath(__file__)) + '/'
-            file1 = curdir + str(ticks1) + str(random.randint(1, 100)) + str(random.randint(1, 100)) + '.txt'
-            file2 = curdir + str(ticks2) + str(random.randint(1, 100)) + str(random.randint(1, 100)) + '.txt'
-
-            # 将所得的数据存储为txt文件
-            with open(file1, 'w') as fp:
-                fp.write(str(res1))
-            with open(file2, 'w') as fp:
-                fp.write(str(res2))
-
-            result = str(filecmp.cmp(file1, file2))
-            os.remove(file1)
-            os.remove(file2)
+            res1 = str(res1)
+            res2 = str(res2)
+            if res1 == res2:
+                result = 'True'
+            else:
+                result = 'False'
         except Exception as e:
             result = 'CompileError' + ': ' + str(e)
     except Exception as e:
@@ -147,6 +123,7 @@ def sql_judge_create(code, checker, insert_sql, table_delete_sql, db, now):
     try:
         excute_many(now, checker)
         db.commit()
+        result = ''
         try:
             checker_states = []
             sql_commands = insert_sql.split(';')
