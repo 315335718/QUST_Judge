@@ -39,6 +39,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
             view_to_select = ''
             view_delete_sql = ''
             status_message = ''
+            table['table_to_delete'].reverse()
             for con in table['table_to_delete']:
                 table_delete_sql += 'drop table ' + con + ';'
             if problem_type == '更新类':
