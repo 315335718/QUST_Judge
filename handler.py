@@ -33,7 +33,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
 
             detail = []  # 判题细节
             response = {'status': 'received', 'verdict': Verdict.JUDGING.value, 'detail': detail}  # 判题时请求的信息(不断更新)
-            flag = 0  # 判题结果标志
+            flag = -1  # 判题结果标志
             table_delete_sql = ''
             table_select_sql = ''
             view_to_select = ''
@@ -49,7 +49,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                     view_delete_sql = 'drop view ' + table['table_to_do'][0] + ';'
                     table_select_sql = 'select * from ' + table['table_to_do'][0] + ';'
                 else:
-                    flag = 4  # 视图表名不正确，答案错误
+                    flag = 0  # 视图表名不正确，答案错误
                     case_result = dict()
                     dic = {'verdict': flag, 'point': 0}
                     status_message = '视图表名不正确，答案错误'
@@ -66,7 +66,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                     for t in table_to_create:
                         table_delete_sql += 'drop table ' + t + ';'
                 else:
-                    flag = 4  # 基本表名不正确，答案错误
+                    flag = 0  # 基本表名不正确，答案错误
                     case_result = dict()
                     dic = {'verdict': flag, 'point': 0}
                     status_message = '基本表名不正确，答案错误'
@@ -75,7 +75,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                     cache.set(fingerprint, response, timeout=3600)
 
             cases_len = len(cases)
-            if cases_len > 0:
+            if cases_len > 0 and flag == -1:
                 average_point = 100 / len(cases)
                 case = cases[0]
                 pre = ''
@@ -129,7 +129,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                     case_result.update(dic)
                     detail.append(case_result)  # 本条加进去
                     cache.set(fingerprint, response, timeout=3600)
-            else:
+            elif flag != 0:
                 flag = 3  # 没有测试点，系统错误
                 case_result = dict()
                 dic = {'verdict': flag, 'point': 0}
