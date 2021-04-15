@@ -7,7 +7,7 @@ import filecmp
 def excute_many(now, sqlcode):
     sql_commands = sqlcode.split(';')
     for command in sql_commands:
-        if command != '':
+        if command != '' and not command.isspace():
             command += ';'
             now.execute(command)
 
@@ -128,7 +128,7 @@ def sql_judge_create(code, checker, insert_sql, table_delete_sql, db, now):
             checker_states = []
             sql_commands = insert_sql.split(';')
             for command in sql_commands:
-                if command != '':
+                if command != '' and not command.isspace():
                     try:
                         now.execute(command)
                         db.commit()
@@ -142,7 +142,7 @@ def sql_judge_create(code, checker, insert_sql, table_delete_sql, db, now):
             db.commit()
             code_states = []
             for command in sql_commands:
-                if command != '':
+                if command != '' and not command.isspace():
                     try:
                         now.execute(command)
                         db.commit()
