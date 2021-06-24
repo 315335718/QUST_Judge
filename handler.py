@@ -45,7 +45,7 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
             if problem_type == '更新类':
                 table_select_sql = 'select * from ' + table['table_to_do'][0] + ';'
             elif problem_type == '创建视图类':
-                view_to_select = re.findall(r'^create\s+view\s+(\S+)\s*', code, re.I)
+                view_to_select = re.findall(r'^\s*create\s+view\s+(\S+)\s*', code, re.I)
                 if view_to_select and view_to_select[0] == table['table_to_do'][0]:
                     view_delete_sql = 'drop view ' + table['table_to_do'][0] + ';'
                     table_select_sql = 'select * from ' + table['table_to_do'][0] + ';'

@@ -101,10 +101,6 @@ def sql_judge_view(code, checker, table_create_sql, table_delete_sql, table_sele
             excute_many(now, table_delete_sql)
             db.commit()
 
-            # 获取时间戳
-            ticks1 = int(time.time())
-            ticks2 = int(time.time()) + 1
-
             res1 = str(res1)
             res2 = str(res2)
             if res1 == res2:
