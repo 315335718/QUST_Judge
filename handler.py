@@ -42,11 +42,18 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
             table['table_to_delete'].reverse()
             for con in table['table_to_delete']:
                 table_delete_sql += 'drop table ' + con + ';'
+            if problem_type == '查询类':
+                # 视图
+                table['table_to_do'].reverse()
+                for con in table['table_to_do']:
+                    view_delete_sql += 'drop view ' + con + ';'
             if problem_type == '更新类':
                 table_select_sql = 'select * from ' + table['table_to_do'][0] + ';'
+                if len(table['table_to_do']) > 1:
+                    view_delete_sql += 'drop view ' + table['table_to_do'][1] + ';'
             elif problem_type == '创建视图类':
-                view1 = re.findall(r'^\s*create\s+view\s+(\S+)\s*', code, re.I)
-                view2 = re.findall(r'^\s*create\s+view\s+(\S+)\(', code, re.I)
+                view1 = re.findall(r'\s*create\s+view\s+(\S+)\s*', code, re.I)
+                view2 = re.findall(r'\s*create\s+view\s+(\S+)\(', code, re.I)
                 if len(view1) > 0 and len(view2) > 0:
                     if len(view1[0]) < len(view2[0]):
                         view_to_select = view1
@@ -91,9 +98,9 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                 case = cases[0]
                 pre = ''
                 if problem_type == '查询类':
-                    pre = sql_judge_select(code, checker, case, table_delete_sql, db, now, cur1, cur2)
+                    pre = sql_judge_select(code, checker, case, table_delete_sql, view_delete_sql, db, now, cur1, cur2)
                 elif problem_type == '更新类':
-                    pre = sql_judge_update(code, checker, case, table_delete_sql, table_select_sql, db, now, cur1,
+                    pre = sql_judge_update(code, checker, case, table_delete_sql, table_select_sql, view_delete_sql, db, now, cur1,
                                            cur2)
                 elif problem_type == '创建视图类':
                     pre = sql_judge_view(code, checker, case, table_delete_sql, table_select_sql, view_delete_sql,
@@ -104,9 +111,9 @@ def judge_handler(fingerprint, code, checker, cases, table, problem_type, ):
                     for index, case in enumerate(cases):
                         result = ''
                         if problem_type == '查询类':
-                            result = sql_judge_select(code, checker, case, table_delete_sql, db, now, cur1, cur2)
+                            result = sql_judge_select(code, checker, case, table_delete_sql, view_delete_sql, db, now, cur1, cur2)
                         elif problem_type == '更新类':
-                            result = sql_judge_update(code, checker, case, table_delete_sql, table_select_sql, db, now,
+                            result = sql_judge_update(code, checker, case, table_delete_sql, table_select_sql, view_delete_sql, db, now,
                                                       cur1, cur2)
                         elif problem_type == '创建视图类':
                             result = sql_judge_view(code, checker, case, table_delete_sql, table_select_sql,
