@@ -25,7 +25,7 @@ def sql_judge_select(code, checker, table_create_sql, table_delete_sql, view_del
             res1 = cur1.fetchall()
             res2 = cur2.fetchall()
 
-            now.execute(view_delete_sql)
+            # now.execute(view_delete_sql)
             excute_many(now, table_delete_sql)
             db.commit()
 
@@ -54,7 +54,7 @@ def sql_judge_update(code, checker, table_create_sql, table_delete_sql, table_se
             cur1.execute(table_select_sql)
             db.commit()
             res1 = cur1.fetchall()
-            now.execute(view_delete_sql)
+            # now.execute(view_delete_sql)
             excute_many(now, table_delete_sql)
             db.commit()
 
@@ -63,7 +63,7 @@ def sql_judge_update(code, checker, table_create_sql, table_delete_sql, table_se
             cur2.execute(table_select_sql)
             db.commit()
             res2 = cur2.fetchall()
-            now.execute(view_delete_sql)
+            # now.execute(view_delete_sql)
             excute_many(now, table_delete_sql)
             db.commit()
 
